@@ -14,10 +14,15 @@ class RetrieveStockPrice(object):
     
     url = 'http://www.google.com/finance/getprices?i='
     
-    def __init__(self, period, window):        
-        self.url += str(period) + '&p=' + str(window)
+    def __init__(self, period, window):
+        self.period = period        
+        self.window = window
+        self.url += str(self.period) + '&p=' + str(self.window)
         
     def getStockPrices(self, ticker):
+        # The API will work for UPPER-CASE ticker values.
+        ticker = ticker.upper()
+        
         query = self.url + 'd&f=d,o,h,l,c&df=cpct&q=' + ticker
         response = urllib2.urlopen(query)
         data = response.read().split('\n')
@@ -32,7 +37,7 @@ class RetrieveStockPrice(object):
             else:
                 try:
                     coffset = int(cdata[0])
-                    cts = int(anchor_stamp) + (coffset * period)
+                    cts = int(anchor_stamp) + (coffset * self.period)
                     parsed_data.append((dt.datetime.fromtimestamp(float(cts)), \
                            float(cdata[1]), float(cdata[2]), float(cdata[3]), \
                            float(cdata[4])))
