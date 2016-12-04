@@ -1,8 +1,10 @@
-import parser
+import json_parser as jpar
+reload(jpar)
 
 def main():
-    parse_data = parser.Parse_Data()
+    print 'In main'
+    parse_data = jpar.ParseData()
     parse_data.extractArticlesFromJSON('Data/Test1.json')
     
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
