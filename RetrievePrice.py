@@ -65,7 +65,3 @@ class Retrieve_Stock_Price(object):
 def main():
     retrieve_price = Retrieve_Stock_Price()
     print retrieve_price.get_google_data('SPY', 300, 10)
-    
-if __name__ == '__main__':
-    main()
-
