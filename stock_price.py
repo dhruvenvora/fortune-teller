@@ -17,7 +17,7 @@ import urllib2
 import datetime as dt
 
 
-class Stock_Price(object):
+class Retrieve_Stock_Price(object):
     
     def __init__(self):
         self.nse = Nse()
@@ -63,8 +63,8 @@ class Stock_Price(object):
         return df
     
 def main():
-    stock_price = Stock_Price()
-    print stock_price.get_google_data('SPY', 300, 10)
+    retrieve_price = Retrieve_Stock_Price()
+    print retrieve_price.get_google_data('SPY', 300, 10)
     
 if __name__ == '__main__':
     main()
