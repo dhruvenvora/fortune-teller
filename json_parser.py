@@ -12,11 +12,7 @@ reload(rp)
 
 class ParseData(object):
     
-    def __init__(self):
-        print 'CTOR Parse Data'
-
-    def extractArticlesFromJSON(self, jsonFile): 
-        print 'Am I here'   
+    def extractArticlesFromJSON(self, jsonFile):   
         articles = []    
         jsonData = open(jsonFile).read()    
         # Create dictionary from json data
