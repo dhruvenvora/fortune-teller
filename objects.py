@@ -4,16 +4,16 @@
 # This class contains the details of an article with publication time. The class also maps to
 # the list of stock prices.
 class Article(object):
-    
+
     def __init__(self, title, timestamp, sentimentScore, ticker):
-        self.title = title
+        #self.title = title
         self.timestamp = timestamp
         self.sentimentScore = sentimentScore
         self.ticker = ticker
-        self.stockPrices = []
+        self.stockPrices = None
 
-    def addStock(self, stockPrice):
-        self.stocksPrices.append(stockPrice)
+    def addStock(self, timestamp, stockPrice):
+        self.stocksPrices[timestamp] = stockPrice
 
 
 # This class stores the price imformarion of a stock at given time.

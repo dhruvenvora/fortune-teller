@@ -12,21 +12,20 @@ import datetime as dt
 
 class RetrieveStockPrice(object):
     
-    def __init__(self):
-        self.url = 'http://www.google.com/finance/getprices?i='
-        self.response = None
-        self.data = None
-        
-    def get_google_data(self, symbol, period, window):
+    url = 'http://www.google.com/finance/getprices?i='
+    
+    def __init__(self, period, window):        
         self.url += str(period) + '&p=' + str(window)
-        self.url += 'd&f=d,o,h,l,c&df=cpct&q=' + symbol
-        self.response = urllib2.urlopen(self.url)
-        self.data = self.response.read().split('\n')
+        
+    def getStockPrices(self, ticker):
+        query = self.url + 'd&f=d,o,h,l,c&df=cpct&q=' + ticker
+        response = urllib2.urlopen(query)
+        data = response.read().split('\n')
         parsed_data = []
         anchor_stamp = ''
-        end = len(self.data)
+        end = len(data)
         for i in range(7, end):
-            cdata = self.data[i].split(',')
+            cdata = data[i].split(',')
             if 'a' in cdata[0]:
                 anchor_stamp = cdata[0].replace('a', '')
                 cts = int(anchor_stamp)
@@ -44,3 +43,13 @@ class RetrieveStockPrice(object):
         df.index = df.ts
         del df['ts']
         return df
+        
+    def getStockPricesForCompanies(self, tickers):
+        
+        stockPriceVsTicker = {}
+        
+        for ticker in tickers:
+            df = self.getStockPrices(ticker)
+            stockPriceVsTicker[ticker] = df
+            
+        return stockPriceVsTicker
