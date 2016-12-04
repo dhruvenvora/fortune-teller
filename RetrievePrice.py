@@ -5,9 +5,10 @@ The module is to get stock prices from the google finance. It will retrieve
 historical stock price data.
 '''
 
-from nsetools import Nse
-from googlefinance import getQuotes
-from yahoo_finance import Share
+# Currently not using any of the following libraries.
+#from nsetools import Nse
+#from googlefinance import getQuotes
+#from yahoo_finance import Share
 from pprint import pprint
 import pandas as pd
 import urllib2
@@ -17,11 +18,12 @@ import datetime as dt
 class RetrieveStockPrice(object):
     
     def __init__(self):
-        self.nse = Nse()
+        #self.nse = Nse()
         self.url = 'http://www.google.com/finance/getprices?i='
         self.response = None
         self.data = None
         
+    # Not used
     def get_price(self):
         q = Share('AMZN')
         pprint(q.get_historical('2016-12-02', '2016-12-03'))
