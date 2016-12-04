@@ -20,6 +20,9 @@ class RetrieveStockPrice(object):
         self.url += str(self.period) + '&p=' + str(self.window)
         
     def getStockPrices(self, ticker):
+        # The API will work for UPPER-CASE ticker values.
+        ticker = ticker.upper()
+        
         query = self.url + 'd&f=d,o,h,l,c&df=cpct&q=' + ticker
         response = urllib2.urlopen(query)
         data = response.read().split('\n')
