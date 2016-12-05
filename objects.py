@@ -5,12 +5,13 @@
 # the list of stock prices.
 class Article(object):
 
-    def __init__(self, title, timestamp, sentimentScore, ticker):
+    def __init__(self, title, timestamp, sentimentScore,date,ticker):
         #self.title = title
         self.timestamp = timestamp
         self.sentimentScore = sentimentScore
         self.ticker = ticker
         self.stockPrices = None
+        self.date = date
 
     def addStock(self, timestamp, stockPrice):
         self.stocksPrices[timestamp] = stockPrice

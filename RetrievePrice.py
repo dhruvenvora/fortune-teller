@@ -45,8 +45,6 @@ class RetrieveStockPrice(object):
                     pass # for time zone offsets thrown into data
         df = pd.DataFrame(parsed_data)
         df.columns = ['ts', 'o', 'h', 'l', 'c']
-        df.index = df.ts
-        del df['ts']
         return df
         
     def getStockPricesForCompanies(self, tickers):
