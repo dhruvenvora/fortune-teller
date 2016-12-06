@@ -23,12 +23,9 @@ class ParseData(object):
         for doc in docs:
             timestamp = doc['timestamp']
             title = doc['source']['enriched']['url']['title']
-            sentimentScore = \
-                doc['source']['enriched']['url']['docSentiment']['score']
-            date = \
-                 doc['source']['enriched']['url']['publicationDate']['date']
-            article = \
-                obj.Article(title,timestamp,sentimentScore,date,ct._TICKERS[company])
+            sentimentScore = doc['source']['enriched']['url']['docSentiment']['score']
+            date = doc['source']['enriched']['url']['publicationDate']['date']
+            article = obj.Article(title,timestamp,sentimentScore,date,ct._TICKERS[company])
             articles.append(article)
         return articles
 

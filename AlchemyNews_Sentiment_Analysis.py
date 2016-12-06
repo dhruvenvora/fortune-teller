@@ -20,8 +20,8 @@ def news_api(org):
     return s
 
 
-#company_list = ["PayPal", "MapR", "Cisco", "Symantec", "Visa", "IBM", "Infosys", "Tesla"]
-company_list = ["PayPal"]
+company_list = ["PayPal", "MapR", "Cisco", "Symantec", "Visa", "IBM", "Infosys", "Tesla"]
+
 for org in company_list:
     s = news_api(org)
     #print s.text

@@ -2,6 +2,7 @@ import json_parser as jpar
 import RetrievePrice as rp
 import constants as ct
 import datetime as dt
+import time
 import os
 import pandas as pd
 reload(jpar)
@@ -9,7 +10,8 @@ reload(jpar)
 
 
 def main():
-    companies = ['amazon','Cisco','IBM','Infosys','symantec','Visa']
+    #companies = ['amazon','Cisco','IBM','Infosys','symantec','Visa']
+    companies = ['amazon']
     company_articles = {}          #Stores company and its corresponding article
     company_timestamp = {}         #Stores company and its corresponding timestamp
     parse_data = jpar.ParseData()
@@ -29,22 +31,24 @@ def main():
             temp.append(res)
         company_timestamp[key] = temp
 
-    #print company_timestamp
-
     # Get Stock Price for past 30 days
     rs = rp.RetrieveStockPrice(300, 60)
     res = rs.getStockPricesForCompanies(['amzn','CSCO','IBM','INFY','SYMC','V'])
-
+    print "\nPrinting Stock prices : %s" % (res)
     relevant_sp = {}
     for org in company_timestamp.keys():
         for ts in company_timestamp[org]:
-            ts_converted = dt.datetime.fromtimestamp(ts)
-            #y = res[ct._TICKERS[org]]
-            #m = y[['ts']]
-            print res[ct._TICKERS[org]]['ts']
-            if ts_converted in res[ct._TICKERS[org]]['ts']:
-                relevant_sp[org] = res[ct._TICKERS[org]]
-    print relevant_sp
+            #ts_converted = dt.datetime.fromtimestamp(ts)
+            #ts_converted_int = dt.datetime.utcfromtimestamp(1477315800) # Need this value
+            #ts_converted = dt.datetime.utcfromtimestamp(1477315800).strftime('%m-%d-%Y %H:%M:%S')
+            ts_converted = dt.datetime.utcfromtimestamp(1477315800)
+            oneDayBeforeTS = (ts_converted + dt.timedelta(hours=16)).strftime('%Y-%m-%d %H:%M:%S')
+            oneDayAfterTS = (ts_converted + dt.timedelta(hours=-16)).strftime('%Y-%m-%d %H:%M:%S')
+            ts_converted = ts_converted.strftime('%Y-%m-%d %H:%M:%S')
+            # Filter the stock prices for 16 hours before and after the news article
+            print "Time Stamp : %s\n1 Day Before : %s\n1 Day After : %s\n" % (ts,oneDayBeforeTS,oneDayAfterTS)
+            relevant_sp[org] = res[ct._TICKERS[org]].loc[(res['CSCO']['ts'] >= oneDayBeforeTS) & (res['CSCO']['ts'] <= oneDayAfterTS)]
+    print "Relevant Stock Price : %s" % relevant_sp
 
 
 if __name__ == "__main__":

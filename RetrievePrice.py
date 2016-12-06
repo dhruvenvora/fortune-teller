@@ -37,7 +37,7 @@ class RetrieveStockPrice(object):
             else:
                 try:
                     coffset = int(cdata[0])
-                    cts = int(anchor_stamp) + (coffset * self.period)
+                    cts = int(anchor_stamp) + (coffset * self.period) 
                     parsed_data.append((dt.datetime.fromtimestamp(float(cts)), \
                            float(cdata[1]), float(cdata[2]), float(cdata[3]), \
                            float(cdata[4])))
