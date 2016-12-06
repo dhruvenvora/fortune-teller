@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 from bs4 import BeautifulSoup
 
 sentiments = 'any positive negative neutral'
@@ -23,7 +24,7 @@ company_list = ["PayPal"]
 for org in company_list:
     s = news_api(org)
     #print s.text
-    filename = '{0}.json'.format(org)
+    filename = os.getcwd() + os.path.sep + ct._DATADICTIONARY + os.path.sep + '{0}.json'.format(org)
     with open(filename,"w") as f:
         f.write(str(s.text))
 
