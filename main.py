@@ -2,8 +2,11 @@ import json_parser as jpar
 import RetrievePrice as rp
 import constants as ct
 import datetime as dt
+import os
 import pandas as pd
 reload(jpar)
+
+
 
 def main():
     companies = ['amazon','Cisco','IBM','Infosys','symantec','Visa']
@@ -14,7 +17,7 @@ def main():
     # Get relevant data from json
     for company in companies:
         #print "Extracting articles from {0}".format(company)
-        articles = parse_data.extractArticlesFromJSON('Data/{0}.json'.format(company),company)
+        articles = parse_data.extractArticlesFromJSON(os.getcwd() + os.path.sep + ct._DATADICTIONARY + os.path.sep +'{0}.json'.format(company),company)
         company_articles[company] = articles
 
     for key in company_articles:
