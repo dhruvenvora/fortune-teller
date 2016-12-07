@@ -68,8 +68,8 @@ def main():
             # Filter the stock prices for 16 hours before and after the news article
             #print "Time Stamp : %s\n1 Day Before : %s\n1 Day After : %s\n" % (ts,oneDayBeforeTS,oneDayAfterTS)
             relevant_sp[org][ts_converted] = res[ct._TICKERS[org]].loc[(res[ct._TICKERS[org]]['ts'] >= oneDayBeforeTS) & (res[ct._TICKERS[org]]['ts'] <= oneDayAfterTS)]
-    print "Relevant Stock Price : %s" % relevant_sp
-    print "No of distinct timestamps : ", relevant_sp[org].keys()#, len(company_timestamp[org]), company_timestamp[org], temp_ts
+        print "Relevant Stock Price : %s" % relevant_sp
+        print "No of distinct timestamps : ", relevant_sp[org].keys()#, len(company_timestamp[org]), company_timestamp[org], temp_ts
 
 if __name__ == "__main__":
     main()
