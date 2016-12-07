@@ -10,3 +10,7 @@ _TICKERS['Visa'] = 'V'
 
 # Adding folder for all the Data being collected
 _DATADICTIONARY = "Data"
+
+#Adding API Key
+#_APIKEY = 'de906cd03d6613b70a8fd4058c55e62af4ed1e30' # Dhruven Key
+_APIKEY = '59b2ea1a1a004851635f43e0ce788b5bc92daca0' # Vikash Key
