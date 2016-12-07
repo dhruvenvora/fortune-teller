@@ -2,23 +2,17 @@ import json_parser as jpar
 import RetrievePrice as rp
 import constants as ct
 import datetime as dt
-import os
 from newspaper import Article
-from aylienapiclient import textapi
 import json
 import urllib
 import urllib2
 import newspaper
+from nytimesarticle import articleAPI
+import constants
 reload(jpar)
 
-APPLICATION_ID = "91ed28e0"
-APPLICATION_KEY = "232d81bcc9f262539a8eefcbf92e50a6"
-
-from nytimesarticle import articleAPI
-
 def GetArchivesNYT(company, entities):
-    print company, ':', entities
-    api = articleAPI('d77682cbc8ff4c3b9b9c20c797f7dfb2')
+    api = articleAPI(constants.AYLIEN_KEY)
     articles = api.search( q = entities, 
      fq = {'headline': company, 'source':['Reuters','AP','The New York Times',\
                 'RETRO REPORT','Technology',' Amazon - Technology']}, 
@@ -42,8 +36,8 @@ def call_api(endpoint, parameters):
   headers = {
       "Accept":                             "application/json",
       "Content-type":                       "application/x-www-form-urlencoded",
-      "X-AYLIEN-TextAPI-Application-ID":    APPLICATION_ID,
-      "X-AYLIEN-TextAPI-Application-Key":   APPLICATION_KEY
+      "X-AYLIEN-TextAPI-Application-ID":    constants.APPLICATION_ID,
+      "X-AYLIEN-TextAPI-Application-Key":   constants.APPLICATION_KEY
   }
   opener = urllib2.build_opener()
   request = urllib2.Request(url, urllib.urlencode(parameters), headers)
@@ -72,8 +66,7 @@ def news_org_api(articleurl):
         print "Sentiment: %s (%F)" % (sentiment["polarity"], sentiment["polarity_confidence"])
     except:
         return
-    #https://news.google.com/news/section?cf=all&topic=tc&ned=us&siidp=999617ba05c99a1f7cd55bc1d83a19906dda&ict=ln
-
+    
 def main():
     #Apple, Samsung, Google, 
     companies = {'Apple':['iphone','macbook'], 'Samsung':['mobile'],'Microsoft':['windows']}
