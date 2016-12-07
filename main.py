@@ -2,72 +2,16 @@ import json_parser as jpar
 import RetrievePrice as rp
 import constants as ct
 import datetime as dt
-from newspaper import Article
-import json
-import urllib
-import urllib2
-import newspaper
-from nytimesarticle import articleAPI
-import constants
+import CreateDatabase as cdb
+import os
+
 reload(jpar)
+reload(cdb)
 
-def GetArchivesNYT(company, entities):
-    api = articleAPI(constants.AYLIEN_KEY)
-    articles = api.search( q = entities, 
-     fq = {'headline': company, 'source':['Reuters','AP','The New York Times',\
-                'RETRO REPORT','Technology',' Amazon - Technology']}, 
-     begin_date = 20160901 )
-     
-    news = []
-    try:
-        for i in articles['response']['docs']:
-            dic = {}
-            dic['date'] = i['pub_date'] # cutting time of day.
-            dic['url'] = i['web_url']
-            if dic['date'] is not None:
-                news.append(dic)
-    except:
-        print 'Could not retrieve articles for ', company
-        
-    return news
-    
-def call_api(endpoint, parameters):
-  url = 'https://api.aylien.com/api/v1/' + endpoint
-  headers = {
-      "Accept":                             "application/json",
-      "Content-type":                       "application/x-www-form-urlencoded",
-      "X-AYLIEN-TextAPI-Application-ID":    constants.APPLICATION_ID,
-      "X-AYLIEN-TextAPI-Application-Key":   constants.APPLICATION_KEY
-  }
-  opener = urllib2.build_opener()
-  request = urllib2.Request(url, urllib.urlencode(parameters), headers)
-  response = opener.open(request);
-  return json.loads(response.read())
-
-def CreateGoogleNewsPaper():
-    googlenews_paper = newspaper.build(u'https://news.google.com/')
-        
-    for google_article in googlenews_paper.articles:
-        google_article.download()
-        try:
-            google_article.html
-            google_article.parse()
-            google_article.text
-        except:
-            continue
-    
-def news_org_api(articleurl):
-    print articleurl
-    try:
-        article = Article(articleurl)
-        article.download()
-        parameters = {"text": article.text}
-        sentiment = call_api("sentiment", parameters)
-        print "Sentiment: %s (%F)" % (sentiment["polarity"], sentiment["polarity_confidence"])
-    except:
-        return
-    
 def main():
+    createdb = cdb.CreateDatabase()
+    parsedata = jpar.ParseData()
+    
     #Apple, Samsung, Google, 
     companies = {'Apple':['iphone','macbook'], 'Samsung':['mobile'],'Microsoft':['windows']}
     company_articles  = {}          #Stores company and its corresponding article
@@ -75,24 +19,42 @@ def main():
     
     for company, entities in companies.items():
         try:
-            company_articles[company] = GetArchivesNYT(company, entities) 
+            company_articles[company] = createdb.GetArchivesNYT(company, entities) 
         except:
             print 'No information about ', company
             
     for company in company_articles.keys():
         print company 
         for value in company_articles[company]:
-            news_org_api(value['url'])
+            createdb.news_org_api(value['url'])
+            
+    # Get relevant data from json
+    for company in companies:
+        #print "Extracting articles from {0}".format(company)
+        articles = parsedata.extractArticlesFromJSON(os.getcwd() + 
+                   os.path.sep + ct._DATADICTIONARY + 
+                   os.path.sep +'{0}.json'.format(company),company)
+        company_articles[company] = articles
+ 
+    for key in company_articles:
+        temp = []
+        articles = company_articles[key]
+        for article in articles:
+            #res = str(article.timestamp) + "_" + article.date[:8]
+            res = article.timestamp
+            temp.append(res)
+            company_timestamp[key] = temp
             
     # Get Stock Price for past 60 days
     rs = rp.RetrieveStockPrice(300, 60)
     res = rs.getStockPricesForCompanies(['amzn','CSCO','IBM','INFY','SYMC','V'])
-    print "\nPrinting Stock prices : %s" % (res)
     relevant_sp = {}
     for org in company_timestamp.keys():
         for ts in company_timestamp[org]:
             relevant_sp[org] = {} 
+    
     temp_ts = []
+    
     for org in company_timestamp.keys():
         for ts in company_timestamp[org]:
             #ts_converted = dt.datetime.fromtimestamp(ts)
