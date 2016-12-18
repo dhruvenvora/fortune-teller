@@ -13,7 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn import linear_model
 import numpy as np
-
+from scipy import stats
 
 def linear_model_main(X_parameters,Y_parameters,predict_value):
  
@@ -90,15 +90,30 @@ def main():
         y1 = df1.loc[count-3:count+3, 'o']
         #x2 = df1.loc[count:count+5,:'']
 
-        lr_x1 = [[-3],[-2],[-1],[0],[1],[2],[3]]
+        lr_x1_plot = [[-3],[-2],[-1],[0],[1],[2],[3]]
+        lr_x1 = [-3,-2,-1,0,1,2,3]
         predict_value = 4
-        print "LENGHT", len(lr_x1), len(y1)
+        #print "LENGHT", len(lr_x1), len(y1)
+        
+
+        slope, intercept, r_value, p_value, std_err = stats.linregress(lr_x1[:4],y1[:4])
+        print "\nStats from before the time the article was published : \n"
+        #print "\nSlope : %s\nIntercept : %s\n" % (slope,intercept)
+        
+        slope, intercept, r_value, p_value, std_err = stats.linregress(lr_x1[4:],y1[4:])
+        print "\nStats from after the time the article was published : \n"
+        #print "\nSlope : %s\nIntercept : %s\n" % (slope,intercept)
+        
+        show_linear_line(lr_x1_plot,y1)
+        
+        """
         result = linear_model_main(lr_x1,y1,predict_value)
         print "Intercept value " , result['intercept']
         print "coefficient" , result['coefficient']
         print "Predicted value: ",result['predicted_value']
-        show_linear_line(lr_x1,y1)
-
+        """
+        
+        
         """
         plt.plot(x1, y1)
         plt.suptitle(i)
