@@ -4,6 +4,8 @@ import constants as ct
 import datetime as dt
 import CreateDatabase as cdb
 import os
+from sklearn.linear_model import LinearRegression
+from sklearn import cross_validation
 
 reload(jpar)
 reload(cdb)
@@ -12,6 +14,31 @@ import matplotlib.pyplot as plt
 from sklearn import linear_model
 import numpy as np
 
+
+def linear_model_main(X_parameters,Y_parameters,predict_value):
+ 
+    # Create linear regression object
+    regr = linear_model.LinearRegression()
+    regr.fit(X_parameters, Y_parameters)
+    predict_outcome = regr.predict(predict_value)
+    predictions = {}
+    predictions['intercept'] = regr.intercept_
+    predictions['coefficient'] = regr.coef_
+    predictions['predicted_value'] = predict_outcome
+    return predictions
+    
+def show_linear_line(X_parameters,Y_parameters):
+    # Create linear regression object
+    print X_parameters,Y_parameters
+    regr = linear_model.LinearRegression()
+    regr.fit(X_parameters, Y_parameters)
+    plt.scatter(X_parameters,Y_parameters,color='blue')
+    plt.plot(X_parameters,regr.predict(X_parameters),color='red',linewidth=4)
+    plt.xticks((X_parameters))
+    plt.yticks([Y_parameters.min(), Y_parameters.max()])
+    plt.show()
+    
+            
 def main():
     createdb = cdb.CreateDatabase()
     parsedata = jpar.ParseData()
@@ -20,18 +47,7 @@ def main():
     companies = {'Apple':['iphone','macbook'], 'Samsung':['mobile'],'Microsoft':['windows']}
     company_articles  = {}          #Stores company and its corresponding article
     company_timestamp = {}         #Stores company and its corresponding timestamp
-    
-    for company, entities in companies.items():
-        try:
-            company_articles[company] = createdb.GetArchivesNYT(company, entities) 
-        except:
-            print 'No information about ', company
-            
-    for company in company_articles.keys():
-        print company 
-        for value in company_articles[company]:
-            createdb.news_org_api(value['url'])
-            
+
     # Get relevant data from json
     for company in companies:
         #print "Extracting articles from {0}".format(company)
@@ -67,19 +83,29 @@ def main():
             if i <= str(j):
                 break
             count += 1
-        print df1.loc[count-3:count, 'ts']
-        print df1.loc[count:count+3,:'ts']
-        x1 = df1.loc[count-3:count, 'ts']
+        print df1.loc[count-3:count+3, 'ts']
+        print df1.loc[count-3:count+3,:'o']
+        x1 = df1.loc[count-3:count+3, 'ts']
         #x1 = df1.loc[count-6:count-1, 'ts']
-        y1 = df1.loc[count:count+3, 'o']
+        y1 = df1.loc[count-3:count+3, 'o']
         #x2 = df1.loc[count:count+5,:'']
 
+        lr_x1 = [[-3],[-2],[-1],[0],[1],[2],[3]]
+        predict_value = 4
+        print "LENGHT", len(lr_x1), len(y1)
+        result = linear_model_main(lr_x1,y1,predict_value)
+        print "Intercept value " , result['intercept']
+        print "coefficient" , result['coefficient']
+        print "Predicted value: ",result['predicted_value']
+        show_linear_line(lr_x1,y1)
+
+        """
         plt.plot(x1, y1)
         plt.suptitle(i)
         plt.xlabel("Time of Day")
         plt.ylabel("Stock Price (in USD)")
         plt.show()
-
+        """
 
 
     '''for i in res:
