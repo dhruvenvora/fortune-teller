@@ -29,7 +29,7 @@ def linear_model_main(X_parameters,Y_parameters,predict_value):
     
 def show_linear_line(X_parameters,Y_parameters):
     # Create linear regression object
-    print X_parameters,Y_parameters
+    #print X_parameters,Y_parameters
     regr = linear_model.LinearRegression()
     regr.fit(X_parameters, Y_parameters)
     plt.scatter(X_parameters,Y_parameters,color='blue')
@@ -96,13 +96,15 @@ def main():
         #print "LENGHT", len(lr_x1), len(y1)
         
 
-        slope, intercept, r_value, p_value, std_err = stats.linregress(lr_x1[:4],y1[:4])
+        slopeBArticle, interceptBArticle, r_valueBArticle, p_valueBArticle, std_errBArticle = stats.linregress(lr_x1[:4],y1[:4])
         print "\nStats from before the time the article was published : \n"
-        #print "\nSlope : %s\nIntercept : %s\n" % (slope,intercept)
+        print "\nSlope : %s\nIntercept : %s\n" % (slopeBArticle,interceptBArticle)
         
-        slope, intercept, r_value, p_value, std_err = stats.linregress(lr_x1[4:],y1[4:])
+        slopeAArticle, interceptAArticle, r_valueAArticle, p_valueAArticle, std_errAArticle = stats.linregress(lr_x1[4:],y1[4:])
         print "\nStats from after the time the article was published : \n"
-        #print "\nSlope : %s\nIntercept : %s\n" % (slope,intercept)
+        print "\nSlope : %s\nIntercept : %s\n" % (slopeAArticle,interceptAArticle)
+        
+        print "The stock prices went %s after the publishing of the article.\n" % ('UP' if slopeAArticle - slopeBArticle > 0 else 'DOWN')
         
         show_linear_line(lr_x1_plot,y1)
         
