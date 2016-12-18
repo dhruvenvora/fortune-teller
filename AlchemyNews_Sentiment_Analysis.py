@@ -22,7 +22,6 @@ def news_api(org,nextURL=''):
     return s
 
 
-
 def writeToFile():
 
     for org in company_list:
@@ -47,5 +46,3 @@ writeToFile()
 #https://access.alchemyapi.com/calls/data/GetNews?apikey=YOUR_API_KEY_HERE&return=enriched.url.title,enriched.url.url,enriched.url.publicationDate,
 #enriched.url.docSentiment&start=1480032000&end=1480719600&q.enriched.url.entities.entity=|text=facebook,
 #type=company|&q.enriched.url.taxonomy.taxonomy_.label=technology%20and%20computing&count=25&outputMode=json
-
-

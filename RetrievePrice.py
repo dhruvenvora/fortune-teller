@@ -8,7 +8,7 @@ historical stock price data.
 import pandas as pd
 import urllib2
 import datetime as dt
-
+import matplotlib.pyplot as plt
 
 class RetrieveStockPrice(object):
     

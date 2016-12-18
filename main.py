@@ -7,6 +7,10 @@ import os
 
 reload(jpar)
 reload(cdb)
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn import linear_model
+import numpy as np
 
 def main():
     createdb = cdb.CreateDatabase()
@@ -45,9 +49,67 @@ def main():
             temp.append(res)
             company_timestamp[key] = temp
             
-    # Get Stock Price for past 60 days
-    rs = rp.RetrieveStockPrice(300, 60)
+    # Get Stock Price for past 30 days
+    rs = rp.RetrieveStockPrice(300, 30)
     res = rs.getStockPricesForCompanies(['amzn','CSCO','IBM','INFY','SYMC','V'])
+    df1 = res['amzn']
+    #print df1
+
+
+    news_articles = ['2016-11-08 04:21:00','2016-11-11 01:57:00', '2016-11-15 12:49:00', '2016-11-16 18:23:00', '2016-11-17 13:19:00', '2016-11-18 05:28:00', '2016-11-20 16:40:00', '2016-11-22 19:01:00', '2016-11-24 01:02:00', '2016-11-26 04:02:00', '2016-11-28 02:03:00', '2016-11-28 14:12:00', '2016-11-29 17:48:00', '2016-11-30 05:01:00', '2016-12-01 19:32:00', '2016-12-02 23:26:00', '2016-12-06 12:57:00', '2016-12-06 13:00:00']
+
+    temp = ['2016-11-15 12:49:00']
+
+    for i in temp:
+        count=0
+        temp = []
+        for j in df1['ts']:
+            if i <= str(j):
+                break
+            count += 1
+        print df1.loc[count-3:count, 'ts']
+        print df1.loc[count:count+3,:'ts']
+        x1 = df1.loc[count-3:count, 'ts']
+        #x1 = df1.loc[count-6:count-1, 'ts']
+        y1 = df1.loc[count:count+3, 'o']
+        #x2 = df1.loc[count:count+5,:'']
+
+        plt.plot(x1, y1)
+        plt.suptitle(i)
+        plt.xlabel("Time of Day")
+        plt.ylabel("Stock Price (in USD)")
+        plt.show()
+
+
+
+    '''for i in res:
+        df = res[i]
+        x = df.loc[1001:,'ts']
+        #y = df.loc[:,'o':]
+        y = df.loc[1001:, 'o']
+        plt.plot(x,y)
+        plt.suptitle(i)
+        plt.xlabel("Time of Day")
+        plt.ylabel("Stock Price (in USD)")
+        plt.show()
+    '''
+
+    '''amazon_df  = res['amzn']
+    x = list(range(0, 2324))
+    x = np.reshape(x, (2324, 1))
+    y = amazon_df.loc[:,'o']
+    y = np.reshape(y, (2324, 1))
+    reg = linear_model.LinearRegression()
+    reg.fit(x,y)
+    print
+
+    regression = np.polyfit(x, y, 1)
+    fit_fn = np.poly1d(regression)
+    plt.plot(x, y, 'yo', x, fit_fn(x), '--k')
+    plt.xlim(0.0, 1000.0)
+    plt.ylim(0, 99999999999999999999)
+'''
+    #print "\nPrinting Stock prices : %s" % (res)
     relevant_sp = {}
     for org in company_timestamp.keys():
         for ts in company_timestamp[org]:
@@ -67,9 +129,8 @@ def main():
             temp_ts.append(ts_converted)
             # Filter the stock prices for 16 hours before and after the news article
             #print "Time Stamp : %s\n1 Day Before : %s\n1 Day After : %s\n" % (ts,oneDayBeforeTS,oneDayAfterTS)
-            relevant_sp[org][ts_converted] = res[ct._TICKERS[org]].loc[(res[ct._TICKERS[org]]['ts'] >= oneDayBeforeTS) & (res[ct._TICKERS[org]]['ts'] <= oneDayAfterTS)]
-        print "Relevant Stock Price : %s" % relevant_sp
-        print "No of distinct timestamps : ", relevant_sp[org].keys()#, len(company_timestamp[org]), company_timestamp[org], temp_ts
+            relevant_sp[org] = res[ct._TICKERS[org]].loc[(res['CSCO']['ts'] >= oneDayBeforeTS) & (res['CSCO']['ts'] <= oneDayAfterTS)]
+    #print "Relevant Stock Price : %s" % relevant_sp
 
 if __name__ == "__main__":
     main()
