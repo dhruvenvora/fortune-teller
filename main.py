@@ -14,6 +14,28 @@ import matplotlib.pyplot as plt
 from sklearn import linear_model
 import numpy as np
 from scipy import stats
+import matplotlib.dates as md
+import dateutil
+
+def show_linear_line_dates(X_parameters,Y_parameters,X_TS):
+
+            
+    datestrings = [str(s) for s in X_TS]
+    dates = [dateutil.parser.parse(s) for s in datestrings]
+
+    plt_data = Y_parameters
+    plt.subplots_adjust(bottom=0.2)
+    plt.xticks( rotation=90 )
+
+    ax=plt.gca()
+    ax.set_xticks(dates)
+
+    xfmt = md.DateFormatter('%Y-%m-%d %H:%M:%S')
+    ax.xaxis.set_major_formatter(xfmt)
+    plt.plot(dates,plt_data, "o-")
+    plt.show()
+
+
 
 def linear_model_main(X_parameters,Y_parameters,predict_value):
  
@@ -106,7 +128,9 @@ def main():
         
         print "The stock prices went %s after the publishing of the article.\n" % ('UP' if slopeAArticle - slopeBArticle > 0 else 'DOWN')
         
-        show_linear_line(lr_x1_plot,y1)
+        #show_linear_line(lr_x1_plot,y1)
+        
+        show_linear_line_dates(lr_x1,y1,x1)
         
         """
         result = linear_model_main(lr_x1,y1,predict_value)
