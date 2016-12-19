@@ -2,13 +2,13 @@ import json_parser as jpar
 import RetrievePrice as rp
 import constants as ct
 import datetime as dt
-import CreateDatabase as cdb
+#import CreateDatabase as cdb
 import os
 from sklearn.linear_model import LinearRegression
 from sklearn import cross_validation
 
 reload(jpar)
-reload(cdb)
+#reload(cdb)
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn import linear_model
@@ -19,7 +19,6 @@ import dateutil
 
 def show_linear_line_dates(X_parameters,Y_parameters,X_TS):
 
-            
     datestrings = [str(s) for s in X_TS]
     dates = [dateutil.parser.parse(s) for s in datestrings]
 
@@ -62,7 +61,7 @@ def show_linear_line(X_parameters,Y_parameters):
     
             
 def main():
-    createdb = cdb.CreateDatabase()
+    #createdb = cdb.CreateDatabase()
     parsedata = jpar.ParseData()
     
     #Apple, Samsung, Google, 
@@ -90,15 +89,17 @@ def main():
     # Get Stock Price for past 30 days
     rs = rp.RetrieveStockPrice(300, 30)
     res = rs.getStockPricesForCompanies(['amzn','CSCO','IBM','INFY','SYMC','V'])
-    df1 = res['amzn']
+    df1 = res['CSCO']
     #print df1
 
-
+    news_articles_cisco = ['2016-12-16 15:35:00', '2016-12-15 08:43:00', '2016-12-14 22:01:00', '2016-12-12 08:37:00', '2016-12-09 20:45:00', '2016-12-08 06:02:00', '2016-12-07 05:30:00' '2016-11-17 15:03:00', '2016-11-16 18:43:00', '2016-10-19 18:21:00']
     news_articles = ['2016-11-08 04:21:00','2016-11-11 01:57:00', '2016-11-15 12:49:00', '2016-11-16 18:23:00', '2016-11-17 13:19:00', '2016-11-18 05:28:00', '2016-11-20 16:40:00', '2016-11-22 19:01:00', '2016-11-24 01:02:00', '2016-11-26 04:02:00', '2016-11-28 02:03:00', '2016-11-28 14:12:00', '2016-11-29 17:48:00', '2016-11-30 05:01:00', '2016-12-01 19:32:00', '2016-12-02 23:26:00', '2016-12-06 12:57:00', '2016-12-06 13:00:00']
 
     temp = ['2016-11-15 12:49:00']
+    
+    res = []
 
-    for i in temp:
+    for i in news_articles_cisco:
         count=0
         temp = []
         for j in df1['ts']:
@@ -127,6 +128,15 @@ def main():
         print "\nSlope : %s\nIntercept : %s\n" % (slopeAArticle,interceptAArticle)
         
         print "The stock prices went %s after the publishing of the article.\n" % ('UP' if slopeAArticle - slopeBArticle > 0 else 'DOWN')
+        
+        if(slopeBArticle > 0 and slopeAArticle > 0):
+            res.append((True, True))
+        elif(slopeBArticle < 0 and slopeAArticle < 0):
+            res.append((False, False))
+        elif(slopeBArticle > 0 and slopeAArticle < 0):
+            res.append((True, False))
+        elif(slopeBArticle < 0 and slopeAArticle > 0):
+            res.append((False, True))
         
         #show_linear_line(lr_x1_plot,y1)
         
@@ -176,6 +186,15 @@ def main():
     plt.xlim(0.0, 1000.0)
     plt.ylim(0, 99999999999999999999)
 '''
+    
+    #printing the accuracy / correlation
+    nc = 0.0
+    for i in res:
+        if i == (True, True) or i == (False, False):
+            nc += 1.0
+    
+    print "Accuracy = %.2f" % (1 - (nc / len(res)))
+    
     #print "\nPrinting Stock prices : %s" % (res)
     relevant_sp = {}
     for org in company_timestamp.keys():
