@@ -17,8 +17,12 @@ from scipy import stats
 import matplotlib.dates as md
 import dateutil
 
-def show_linear_line_dates(X_parameters,Y_parameters,X_TS):
+figure = 1
 
+def show_linear_line_dates(X_parameters,Y_parameters,X_TS):
+    global figure
+    plt.figure(figure)
+    figure += 1
     datestrings = [str(s) for s in X_TS]
     dates = [dateutil.parser.parse(s) for s in datestrings]
 
@@ -92,108 +96,69 @@ def main():
     df1 = res['CSCO']
     #print df1
 
-    news_articles_cisco = ['2016-12-16 15:35:00', '2016-12-15 08:43:00', '2016-12-14 22:01:00', '2016-12-12 08:37:00', '2016-12-09 20:45:00', '2016-12-08 06:02:00', '2016-12-07 05:30:00' '2016-11-17 15:03:00', '2016-11-16 18:43:00', '2016-10-19 18:21:00']
-    news_articles = ['2016-11-08 04:21:00','2016-11-11 01:57:00', '2016-11-15 12:49:00', '2016-11-16 18:23:00', '2016-11-17 13:19:00', '2016-11-18 05:28:00', '2016-11-20 16:40:00', '2016-11-22 19:01:00', '2016-11-24 01:02:00', '2016-11-26 04:02:00', '2016-11-28 02:03:00', '2016-11-28 14:12:00', '2016-11-29 17:48:00', '2016-11-30 05:01:00', '2016-12-01 19:32:00', '2016-12-02 23:26:00', '2016-12-06 12:57:00', '2016-12-06 13:00:00']
-
-    temp = ['2016-11-15 12:49:00']
+    news_articles = {
+        "CSCO":['2016-12-16 15:35:00','2016-12-15 08:43:00','2016-12-14 22:01:00','2016-12-12 08:37:00','2016-12-09 20:45:00','2016-12-08 06:02:00','2016-12-07 05:30:00','2016-11-17 15:03:00','2016-11-16 18:43:00','2016-10-19 18:21:00'],
+        "amzn":['2016-11-08 04:21:00','2016-11-11 01:57:00','2016-11-15 12:49:00','2016-11-16 18:23:00','2016-11-17 13:19:00','2016-11-18 05:28:00','2016-11-20 16:40:00','2016-11-22 19:01:00','2016-11-24 01:02:00','2016-11-26 04:02:00','2016-11-28 02:03:00','2016-11-28 14:12:00','2016-11-29 17:48:00','2016-11-30 05:01:00','2016-12-01 19:32:00','2016-12-02 23:26:00', '2016-12-06 12:57:00', '2016-12-06 13:00:00']
+    }
     
-    res = []
+    finalAcc = 0
+    for comp,articles in news_articles.items():
+        res = []
+        for i in articles:
+            count=0
+            temp = []
+            for j in df1['ts']:
+                if i <= str(j):
+                    break
+                count += 1
+            print df1.loc[count-3:count+3, 'ts']
+            print df1.loc[count-3:count+3,:'o']
+            x1 = df1.loc[count-3:count+3, 'ts']
+            #x1 = df1.loc[count-6:count-1, 'ts']
+            y1 = df1.loc[count-3:count+3, 'o']
+            #x2 = df1.loc[count:count+5,:'']
 
-    for i in news_articles_cisco:
-        count=0
-        temp = []
-        for j in df1['ts']:
-            if i <= str(j):
-                break
-            count += 1
-        print df1.loc[count-3:count+3, 'ts']
-        print df1.loc[count-3:count+3,:'o']
-        x1 = df1.loc[count-3:count+3, 'ts']
-        #x1 = df1.loc[count-6:count-1, 'ts']
-        y1 = df1.loc[count-3:count+3, 'o']
-        #x2 = df1.loc[count:count+5,:'']
-
-        lr_x1_plot = [[-3],[-2],[-1],[0],[1],[2],[3]]
-        lr_x1 = [-3,-2,-1,0,1,2,3]
-        predict_value = 4
-        #print "LENGHT", len(lr_x1), len(y1)
+            lr_x1_plot = [[-3],[-2],[-1],[0],[1],[2],[3]]
+            lr_x1 = [-3,-2,-1,0,1,2,3]
+            predict_value = 4
+            #print "LENGHT", len(lr_x1), len(y1)
         
-
-        slopeBArticle, interceptBArticle, r_valueBArticle, p_valueBArticle, std_errBArticle = stats.linregress(lr_x1[:4],y1[:4])
-        print "\nStats from before the time the article was published : \n"
-        print "\nSlope : %s\nIntercept : %s\n" % (slopeBArticle,interceptBArticle)
-        
-        slopeAArticle, interceptAArticle, r_valueAArticle, p_valueAArticle, std_errAArticle = stats.linregress(lr_x1[4:],y1[4:])
-        print "\nStats from after the time the article was published : \n"
-        print "\nSlope : %s\nIntercept : %s\n" % (slopeAArticle,interceptAArticle)
-        
-        print "The stock prices went %s after the publishing of the article.\n" % ('UP' if slopeAArticle - slopeBArticle > 0 else 'DOWN')
-        
-        if(slopeBArticle > 0 and slopeAArticle > 0):
-            res.append((True, True))
-        elif(slopeBArticle < 0 and slopeAArticle < 0):
-            res.append((False, False))
-        elif(slopeBArticle > 0 and slopeAArticle < 0):
-            res.append((True, False))
-        elif(slopeBArticle < 0 and slopeAArticle > 0):
-            res.append((False, True))
-        
-        #show_linear_line(lr_x1_plot,y1)
-        
-        show_linear_line_dates(lr_x1,y1,x1)
-        
-        """
-        result = linear_model_main(lr_x1,y1,predict_value)
-        print "Intercept value " , result['intercept']
-        print "coefficient" , result['coefficient']
-        print "Predicted value: ",result['predicted_value']
-        """
-        
-        
-        """
-        plt.plot(x1, y1)
-        plt.suptitle(i)
-        plt.xlabel("Time of Day")
-        plt.ylabel("Stock Price (in USD)")
-        plt.show()
-        """
-
-
-    '''for i in res:
-        df = res[i]
-        x = df.loc[1001:,'ts']
-        #y = df.loc[:,'o':]
-        y = df.loc[1001:, 'o']
-        plt.plot(x,y)
-        plt.suptitle(i)
-        plt.xlabel("Time of Day")
-        plt.ylabel("Stock Price (in USD)")
-        plt.show()
-    '''
-
-    '''amazon_df  = res['amzn']
-    x = list(range(0, 2324))
-    x = np.reshape(x, (2324, 1))
-    y = amazon_df.loc[:,'o']
-    y = np.reshape(y, (2324, 1))
-    reg = linear_model.LinearRegression()
-    reg.fit(x,y)
-    print
-
-    regression = np.polyfit(x, y, 1)
-    fit_fn = np.poly1d(regression)
-    plt.plot(x, y, 'yo', x, fit_fn(x), '--k')
-    plt.xlim(0.0, 1000.0)
-    plt.ylim(0, 99999999999999999999)
-'''
+            if(len(y1) < 7):
+                continue
+            
+            slopeBArticle, interceptBArticle, r_valueBArticle, p_valueBArticle, std_errBArticle = stats.linregress(lr_x1[:4],y1[:4])
+            print "\nStats from before the time the article was published : \n"
+            print "\nSlope : %s\nIntercept : %s\n" % (slopeBArticle,interceptBArticle)
+            
+            slopeAArticle, interceptAArticle, r_valueAArticle, p_valueAArticle, std_errAArticle = stats.linregress(lr_x1[4:],y1[4:])
+            print "\nStats from after the time the article was published : \n"
+            print "\nSlope : %s\nIntercept : %s\n" % (slopeAArticle,interceptAArticle)
+            
+            print "The stock prices went %s after the publishing of the article.\n" % ('UP' if slopeAArticle - slopeBArticle > 0 else 'DOWN')
+            
+            if(slopeBArticle > 0 and slopeAArticle > 0):
+                res.append((True, True))
+            elif(slopeBArticle < 0 and slopeAArticle < 0):
+                res.append((False, False))
+            elif(slopeBArticle > 0 and slopeAArticle < 0):
+                res.append((True, False))
+            elif(slopeBArticle < 0 and slopeAArticle > 0):
+                res.append((False, True))
+            
+            #show_linear_line(lr_x1_plot,y1)
+            
+            show_linear_line_dates(lr_x1,y1,x1)
     
-    #printing the accuracy / correlation
-    nc = 0.0
-    for i in res:
-        if i == (True, True) or i == (False, False):
-            nc += 1.0
+        #printing the accuracy / correlation
+        nc = 0.0
+        for i in res:
+            if i == (True, True) or i == (False, False):
+                nc += 1.0
     
-    print "Accuracy = %.2f" % (1 - (nc / len(res)))
+        finalAcc += (1 - (nc / len(res)))
+    
+    finalAcc = finalAcc / len(news_articles)
+    print "Accuracy %.2f " % (finalAcc)
     
     #print "\nPrinting Stock prices : %s" % (res)
     relevant_sp = {}
